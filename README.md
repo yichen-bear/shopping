@@ -23,6 +23,14 @@
   npm install
   node index.js
   ```
+- **前端啟動**
+  ```
+  cd frontend
+  npm install
+  npm run dev
+  ```
 
 ## 筆記
-- **async** => 代表非同步函數
+- **async** => 代表非同步函數         \ 通常一起使用
+- **await** => 先做別的事，好了再回來  /
+- **JSON.stringify()** => 把東西變字串(string)

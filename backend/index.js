@@ -10,23 +10,99 @@ app.use(express.json()); // 讓 Node.js 看得懂 JSON 格式的資料
 const users = []; // 暫時當作資料庫
 const JWT_SECRET = "my_super_secret_key"; // 這是你的簽名私鑰
 
+
 // --- 註冊 API ---
 app.post('/api/register', async (req, res) => {
     const { email, password } = req.body;
-
-    // 1. 檢查使用者是否已存在
     const userExists = users.find(u => u.email === email);
-    if (userExists) return res.status(400).send("使用者已存在");
+    if (userExists) return res.status(400).json({ message: "這個帳號已經被註冊過囉！" });
 
-    // 2. 加密密碼 (Hash)
     const hashedPassword = await bcrypt.hash(password, 10);
+    users.push({ email, password: hashedPassword });
 
-    // 3. 存入「資料庫」
-    const newUser = { email, password: hashedPassword };
-    users.push(newUser);
+    // ✅ 修改這裡：一定要用 .json()，前端才收得到正確格式
+    res.status(201).json({ message: "註冊成功！請切換到登入模式。" }); 
+});
 
-    res.status(201).send("註冊成功！");
-    console.log("目前的使用者名單：", users);
+// --- 登入 API ---
+app.post('/api/login', async (req, res) => {
+    const { email, password } = req.body;
+
+    // 1. 尋找使用者
+    const user = users.find(u => u.email === email);
+    if (!user) return res.status(400).send("找不到該使用者");
+
+    // 2. 比對密碼
+    // 第一個參數是「明文密碼」，第二個是「資料庫存的亂碼」
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+
+    if (!isPasswordValid) return res.status(400).send("密碼錯誤");
+
+    // 3. 登入成功，發放 JWT 證件 (Token)
+    // 我們把使用者的 email 塞進證件裡，設定 1 小時後過期
+    const token = jwt.sign({ email: user.email }, JWT_SECRET, { expiresIn: '1h' });
+
+    // 4. 回傳證件給前端
+    res.json({
+        message: "登入成功！",
+        token: token
+    });
+});
+
+// 模擬商品資料庫
+const products = [
+  { id: 1, name: "極簡風手錶", price: 1200, image: "https://picsum.photos/200/200?random=1" },
+  { id: 2, name: "降噪藍牙耳機", price: 3500, image: "https://picsum.photos/200/200?random=2" },
+  { id: 3, name: "機械鍵盤", price: 2800, image: "https://picsum.photos/200/200?random=3" }
+];
+
+// 取得所有商品的 API
+app.get('/api/products', (req, res) => {
+  res.json(products);
+});
+
+// 模擬購物車資料庫
+let carts = []; 
+
+app.post('/api/cart', (req, res) => {
+    // 1. 從 Header 拿出身分證 (Token)
+    const token = req.headers['authorization'];
+    
+    if (!token) return res.status(401).json({ message: "請先登入！" });
+
+    try {
+        // 2. 驗證證件對不對
+        const decoded = jwt.verify(token, JWT_SECRET);
+        
+        // 3. 證件對了，把商品加進購物車
+        const { productId } = req.body;
+        carts.push({ user: decoded.email, productId });
+        
+        console.log("目前購物車狀態：", carts);
+        res.json({ message: "已加入購物車！", cartCount: carts.length });
+    } catch (err) {
+        res.status(403).json({ message: "證件無效或已過期" });
+    }
+});
+
+app.get('/api/get-cart', (req, res) => {
+    const token = req.headers['authorization'];
+    if (!token) return res.status(401).send("未登入");
+
+    try {
+        const decoded = jwt.verify(token, JWT_SECRET);
+        // 只找回屬於這個使用者的購物車項目
+        const userCart = carts.filter(c => c.user === decoded.email);
+        
+        // 進階：把商品 ID 換成完整的商品資訊
+        const cartDetails = userCart.map(item => {
+            return products.find(p => p.id === item.productId);
+        });
+
+        res.json(cartDetails);
+    } catch (err) {
+        res.status(403).send("無效 Token");
+    }
 });
 
 // 啟動伺服器
