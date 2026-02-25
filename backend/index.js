@@ -1,5 +1,6 @@
 const express = require('express');
 const cors = require('cors');
+const authRoutes = require('./routes/auth');
 const bcrypt = require('bcryptjs'); // 引入加密工具
 const jwt = require('jsonwebtoken'); // 引入標籤工具
 
@@ -11,43 +12,8 @@ const users = []; // 暫時當作資料庫
 const JWT_SECRET = "my_super_secret_key"; // 這是你的簽名私鑰
 
 
-// --- 註冊 API ---
-app.post('/api/register', async (req, res) => {
-    const { email, password } = req.body;
-    const userExists = users.find(u => u.email === email);
-    if (userExists) return res.status(400).json({ message: "這個帳號已經被註冊過囉！" });
-
-    const hashedPassword = await bcrypt.hash(password, 10);
-    users.push({ email, password: hashedPassword });
-
-    // ✅ 修改這裡：一定要用 .json()，前端才收得到正確格式
-    res.status(201).json({ message: "註冊成功！請切換到登入模式。" }); 
-});
-
-// --- 登入 API ---
-app.post('/api/login', async (req, res) => {
-    const { email, password } = req.body;
-
-    // 1. 尋找使用者
-    const user = users.find(u => u.email === email);
-    if (!user) return res.status(400).send("找不到該使用者");
-
-    // 2. 比對密碼
-    // 第一個參數是「明文密碼」，第二個是「資料庫存的亂碼」
-    const isPasswordValid = await bcrypt.compare(password, user.password);
-
-    if (!isPasswordValid) return res.status(400).send("密碼錯誤");
-
-    // 3. 登入成功，發放 JWT 證件 (Token)
-    // 我們把使用者的 email 塞進證件裡，設定 1 小時後過期
-    const token = jwt.sign({ email: user.email }, JWT_SECRET, { expiresIn: '1h' });
-
-    // 4. 回傳證件給前端
-    res.json({
-        message: "登入成功！",
-        token: token
-    });
-});
+// 細節在 auth.js
+app.use('/api/auth', authRoutes);
 
 // 模擬商品資料庫
 const products = [
