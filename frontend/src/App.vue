@@ -29,6 +29,7 @@
         <ul v-if="userCart.length > 0">
           <li v-for="(item, index) in userCart" :key="index">
             {{ item.name }} - ${{ item.price }}
+            <button @click="removeFromCart(item.id)" style="background-color: #ff9800;">刪除</button>
           </li>
         </ul>
         <p v-else>購物車空空的喔！</p>
@@ -114,6 +115,24 @@ const addToCart = async (productId) => {
     }
     alert(result.message);
   } catch (error) { alert("加入失敗"); }
+};
+
+const removeFromCart = async (productId) => {
+  try {
+    const response = await fetch(`http://localhost:3000/api/cart/${productId}`, {
+      method: 'DELETE',
+      headers: { 
+        'Authorization': token.value 
+      }
+    });
+    const result = await response.json();
+    if (response.ok) {
+      await fetchCart(); // 刪除立刻刷清單
+    }
+    alert(result.message);
+  } catch (error) { 
+    alert("刪除失敗"); 
+  }
 };
 
 const handleLogout = () => {
