@@ -29,6 +29,14 @@
   npm install
   npm run dev
   ```
+  - **資料庫資料**
+  ```
+  SELECT * FROM users;
+  SELECT * FROM carts;
+  SELECT * FROM products;
+  INSERT INTO products (name, price, image) 
+  VALUES ('商品名稱', 價格, '圖片網址');
+  ```
 
 ## 筆記
 - **async** => 代表非同步函數         \ 通常一起使用
