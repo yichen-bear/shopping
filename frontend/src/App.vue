@@ -15,7 +15,10 @@
       <h2>精選商品</h2>
       <div class="products-grid">
         <div v-for="p in allProducts" :key="p.id" class="product-card">
-          <img :src="p.image" style="width: 100px; height: 100px;" />
+          <div 
+            class="color-box"
+            :style="{ backgroundColor: `rgb(${p.red_value}, ${p.green_value}, ${p.blue_value})` }"
+          ></div>          
           <h3>{{ p.name }}</h3>
           <p>價格：${{ p.price }}</p>
           <button @click="addToCart(p.id)">加入購物車</button>
@@ -193,5 +196,12 @@ button {
 .product-card img {
   width: 100%;
   border-radius: 4px;
+}
+.color-box {
+  width: 100px;
+  height: 100px;
+  margin: 0 auto 10px auto; /* 居中並與下方文字保持距離 */
+  border: 1px solid #ddd;
+  border-radius: 8px;
 }
 </style>

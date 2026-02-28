@@ -36,7 +36,7 @@ router.get('/get-cart', async (req, res) => {
         
         // 使用 SQL JOIN 語句一次抓出購物車資料與商品詳細資訊
         const sql = `
-            SELECT p.id, p.name, p.price, p.image 
+            SELECT p.id, p.name, p.price, p.red_value, p.green_value, p.blue_value
             FROM carts c
             JOIN products p ON c.product_id = p.id
             WHERE c.user_email = ?

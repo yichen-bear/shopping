@@ -4,7 +4,7 @@
 
 ## 使用技術棧
 
-- **前端:** Vue 3 (Vite), Vue Router, Pinia
+- **前端:** Vue 3 (Vite), Vue Router
 - **後端:** Node.js, Express
 - **資料庫:** MySQL
 - **版本控制:** Git / GitHub
@@ -29,13 +29,21 @@
   npm install
   npm run dev
   ```
-  - **資料庫資料**
+  - **資料庫資料操作**
   ```
   SELECT * FROM users;
+  DELETE FROM users WHERE email = 'user@example.com';
+  SELECT COUNT(*) FROM users;
+  ```
+  ```
   SELECT * FROM carts;
+  ```
+  ```
   SELECT * FROM products;
   INSERT INTO products (name, price, image) 
   VALUES ('商品名稱', 價格, '圖片網址');
+  UPDATE products SET price = 850 WHERE id = 4;
+  DELETE FROM products WHERE id = 4;
   ```
 
 ## 筆記
