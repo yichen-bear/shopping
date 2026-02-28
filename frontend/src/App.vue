@@ -67,7 +67,7 @@ const fetchProducts = async () => {
 const fetchCart = async () => {
   if (!token.value) return;
   try {
-    const response = await fetch('http://localhost:3000/api/get-cart', {
+    const response = await fetch('http://localhost:3000/api/cart/get-cart', {
       headers: { 'Authorization': token.value }
     });
     if (response.ok) {
