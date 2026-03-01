@@ -31,6 +31,9 @@
   ```
   - **資料庫資料操作**
   ```
+  USE my_shop;
+  ```
+  ```
   SELECT * FROM users;
   DELETE FROM users WHERE email = 'user@example.com';
   SELECT COUNT(*) FROM users;
