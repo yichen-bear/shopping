@@ -1,13 +1,16 @@
 <template>
   <div>
-    <form v-if="!token" @submit.prevent="handleSubmit">
-      <input v-model="email" type="email" placeholder="Email" required /><br />
-      <input v-model="password" type="password" placeholder="密碼" required /><br />
-      <button type="submit">{{ isLoginMode ? '登入' : '註冊' }}</button>
-      <p @click="isLoginMode = !isLoginMode" style="cursor: pointer; color: blue;">
+    <div v-if="!token" class="auth-container">
+      <h2>{{ isLoginMode ? '帳號登入' : '註冊新帳號' }}</h2>
+      <form @submit.prevent="handleSubmit">
+        <input v-model="email" type="email" placeholder="Email" required /><br />
+        <input v-model="password" type="password" placeholder="密碼" required /><br />
+        <button type="submit" class="auth-btn">{{ isLoginMode ? '登入' : '註冊' }}</button>
+      </form>
+      <p @click="isLoginMode = !isLoginMode" class="toggle-mode">
         {{ isLoginMode ? '還沒有帳號？按此註冊' : '已經有帳號？按此登入' }}
       </p>
-    </form>
+    </div>
 
     <div v-if="token">
       <h2>精選商品</h2>
@@ -19,7 +22,7 @@
           ></div>          
           <h3>{{ p.name }}</h3>
           <p>價格：${{ p.price }}</p>
-          <button @click="addToCart(p.id)">加入購物車</button>
+          <button class="add-btn" @click="addToCart(p.id)">加入購物車</button>
         </div>
       </div>
     </div>
@@ -95,23 +98,91 @@ watch(() => props.token, (newToken) => {
 </script>
 
 <style scoped>
+.auth-container {
+    max-width: 400px;
+    margin: 50px auto;
+    padding: 30px;
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    text-align: center;
+}
+.auth-container input {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-sizing: border-box; /* 確保 padding 不會撐開寬度 */
+}
+.auth-btn {
+    background-color: #4a4a4a; /* 深灰按鈕 */
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 25px;
+    width: 100%;
+    cursor: pointer;
+    font-weight: bold;
+}
+.toggle-mode {
+    cursor: pointer;
+    color: #b08914;
+    font-size: 14px;
+    margin-top: 15px;
+}
 .products-grid { 
     display: flex; 
     justify-content: center; 
-    gap: 20px; 
+    gap: 30px; 
     flex-wrap: wrap; 
+    padding: 20px;
 }
 .product-card { 
-    border: 1px solid #ddd; 
-    padding: 15px; 
-    border-radius: 8px; 
-    width: 200px; 
+    background-color: white;
+    border: 1px solid #eee; 
+    padding: 20px; 
+    border-radius: 12px;
+    width: 220px;
+    text-align: center;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    transition: transform 0.2s;
+}
+.product-card:hover {
+    transform: translateY(-5px);
 }
 .color-box { 
-    width: 100px; 
-    height: 100px; 
-    margin: 0 auto 10px auto; 
-    border: 1px solid #ddd; 
-    border-radius: 8px; 
-    }
+    width: 120px; 
+    height: 120px; 
+    margin: 0 auto 15px auto; 
+    border: none;
+    border-radius: 10px; 
+    box-shadow: inset 0 0 10px rgba(0,0,0,0.1);
+}
+h3 { 
+    margin: 10px 0; 
+    color: #333; 
+}
+p { margin: 5px 0; 
+    color: #666; 
+}
+h2 {
+    text-align: center;
+    font-size: 30px;
+}
+.add-btn {
+  background-color: #b08914;
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 25px;
+  cursor: pointer;
+  width: 100%;
+  font-weight: bold;
+  transition: background-color 0.3s;
+  margin-top: 15px;
+}
+.add-btn:hover {
+  background-color: #86680e;
+}
 </style>
