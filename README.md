@@ -53,7 +53,7 @@
 - **async** => 代表非同步函數         \ 通常一起使用
 - **await** => 先做別的事，好了再回來  /
 - **JSON.stringify()** => 把東西變字串(string)
-- **SQL JOIN** => 
-INNER JOIN: 左右皆符合回傳
-LEFT JOIN: 左表全回傳，右表符合才顯示
+- **SQL JOIN** =>  
+INNER JOIN: 左右皆符合回傳  
+LEFT JOIN: 左表全回傳，右表符合才顯示  
 RIGHT JOIN: 右表全回傳，左表符合才顯示
