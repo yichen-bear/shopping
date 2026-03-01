@@ -15,7 +15,7 @@
       <router-view :token="token" @update-token="updateToken" />
     </main>
 
-    <p style="color: red; text-align: center;">{{ message }}</p>
+    <!-- <p style="color: red; text-align: center;" v-if="!token && message">{{ message }}</p> -->
   </div>
 </template>
 
@@ -29,24 +29,33 @@ const router = useRouter()
 
 const updateToken = (newToken) => {
   token.value = newToken
+  if (newToken) {
+    message.value = '' // 登入後清空訊息
+  }
 }
 
 const handleLogout = () => {
-  token.value = ''
   localStorage.removeItem('myToken')
+  token.value = ''
   message.value = "已登出"
+  
+  // 3秒後自動隱藏已登出訊息
+  setTimeout(() => {
+    message.value = ""
+  }, 3000)
+  
   router.push('/')
 }
 </script>
 
 <style>
+/* ... 保持您的樣式不變 ... */
 body {                
   margin: 0; 
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* 更現代的字體 */
-  background-color: #fdfaf6; /* 溫暖的淺米色背景 */
-  color: #4a4a4a; /* 深灰文字，比純黑柔和 */
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #fdfaf6;
+  color: #4a4a4a;
 }
-
 .main-header {
   position: fixed;
   top: 0;
@@ -60,7 +69,6 @@ body {
   align-items: center;
   z-index: 1000;
 }
-
 .header-content {
   width: 90%;
   max-width: 1200px;
@@ -68,26 +76,22 @@ body {
   justify-content: space-between;
   align-items: center;
 }
-
 .logo {
   font-size: 24px;
   font-weight: bold;
   text-decoration: none;
   color: #333;
 }
-
 .header-right {
   display: flex;
   align-items: center;
   gap: 15px;
 }
-
 .nav-link {
   text-decoration: none;
   color: #333;
   font-weight: bold;
 }
-
 .logout-btn {
   background-color: #ff4d4d;
   padding: 8px 16px;
@@ -97,9 +101,8 @@ body {
   color: white;
   cursor: pointer;
 }
-
 .content-container {
-  padding-top: 80px; /* 這裡要大於 header 的高度 */
+  padding-top: 80px;
   padding-bottom: 20px;
 }
 </style>

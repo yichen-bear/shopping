@@ -10,21 +10,25 @@
     </div>
 
     <div v-else>
-      <ul v-if="userCart.length > 0">
-        <li v-for="(item, index) in userCart" :key="index" class="cart-item">
+      <div v-if="userCart.length > 0" class="cart-grid">
+        <div v-for="(item, index) in userCart" :key="index" class="cart-item-card">
           <div
             class="small-color-box"
             :style="{
               backgroundColor: `rgb(${item.red_value}, ${item.green_value}, ${item.blue_value})`,
             }"
           ></div>
-          {{ item.name }} - ${{ item.price }}
-          <button @click="removeFromCart(item.id)" class="delete-btn">
-            刪除
-          </button>
-        </li>
-      </ul>
-      <p v-else>購物車目前是空的</p>
+          <div class="item-info">
+            <p class="item-name">{{ item.name }}</p>
+            <p class="item-price">${{ item.price }}</p>
+            <button @click="removeFromCart(item.id)" class="delete-btn">
+              刪除
+            </button>
+          </div>
+        </div>
+      </div>
+      <p v-else style="text-align: center;">購物車目前是空的</p>
+      
       <div class="back-btn-container">
         <router-link to="/" class="back-btn">回到商品頁</router-link>
       </div>
@@ -82,34 +86,71 @@ onMounted(fetchCart);
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
 }
 
-.cart-item {
+/* --- 新增/修改的樣式 --- */
+.cart-grid {
+  display: grid;
+  /* 這裡設定一行顯示 2 個商品，如果想一行 3 個可以改成 repeat(3, 1fr) */
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.cart-item-card {
   display: flex;
   align-items: center;
-  justify-content: space-between; /* 左右分開 */
   gap: 15px;
-  margin-bottom: 15px;
-  padding: 10px;
-  border-bottom: 1px solid #eee;
+  padding: 15px;
+  border: 1px solid #eee;
+  border-radius: 12px;
+  background-color: #fff;
+  transition: box-shadow 0.2s;
 }
+.cart-item-card:hover {
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
 .small-color-box {
-  width: 40px;
-  height: 40px;
+  width: 60px; /* 稍微放大一點點，看起來更顯眼 */
+  height: 60px;
   border-radius: 8px;
   border: 1px solid #ddd;
+  flex-shrink: 0; /* 防止盒子被壓縮 */
 }
+
+.item-info {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  flex-grow: 1;
+}
+
+.item-name {
+  font-weight: bold;
+  margin: 0;
+  font-size: 16px;
+}
+.item-price {
+  margin: 0;
+  color: #b08914;
+  font-weight: bold;
+}
+
 .delete-btn {
-  background-color: #ff6b6b; /* 珊瑚紅 */
+  background-color: #ff6b6b;
   color: white;
   border: none;
-  padding: 8px 16px;
+  padding: 6px 12px; /* 縮小按鈕 */
   border-radius: 20px;
   cursor: pointer;
-  font-size: 14px;
+  font-size: 12px;
+  width: 100%; /* 按鈕佔滿資訊區域寬度 */
   transition: background-color 0.3s;
 }
 .delete-btn:hover {
   background-color: #ff4d4d;
 }
+/* ------------------- */
+
 .back-btn {
   display: inline-block;
   margin-top: 20px;
