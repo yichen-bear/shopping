@@ -40,6 +40,7 @@ router.get('/get-cart', async (req, res) => {
             FROM carts c
             JOIN products p ON c.product_id = p.id
             WHERE c.user_email = ?
+            ORDER BY p.id ASC
         `;
         const [rows] = await db.execute(sql, [decoded.email]);
         
@@ -73,6 +74,32 @@ router.delete('/:productId', async (req, res) => {
     } catch (err) {
         console.error(err);
         res.status(403).json({ message: "證件無效" });
+    }
+});
+
+// 減少一筆數量的 API (只刪除一筆)
+router.delete('/remove-one/:productId', async (req, res) => {
+    const token = req.headers['authorization'];
+    if (!token) return res.status(401).json({ message: "請先登入！" });
+
+    try {
+        const decoded = jwt.verify(token, JWT_SECRET);
+        const targetId = Number(req.params.productId);
+
+        // LIMIT 1 確保只刪除一筆紀錄
+        const [result] = await db.execute(
+            'DELETE FROM carts WHERE user_email = ? AND product_id = ? LIMIT 1',
+            [decoded.email, targetId]
+        );
+        
+        if (result.affectedRows > 0) {
+            res.json({ message: "已減少一件商品數量" });
+        } else {
+            res.status(404).json({ message: "購物車內找不到此商品" });
+        }
+    } catch (err) {
+        console.error(err);
+        res.status(403).json({ message: "驗證失效" });
     }
 });
 
