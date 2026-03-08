@@ -136,7 +136,7 @@ onMounted(fetchCart);
 
 <style scoped>
 .cart-section {
-  max-width: 800px;
+  max-width: 900px;
   margin: 0 auto;
   padding: 20px;
 }

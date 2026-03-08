@@ -62,7 +62,7 @@ router.delete('/:productId', async (req, res) => {
 
         // 執行 SQL DELETE 語句，並限制為該使用者的商品
         const [result] = await db.execute(
-            'DELETE FROM carts WHERE user_email = ? AND product_id = ? LIMIT 1',
+            'DELETE FROM carts WHERE user_email = ? AND product_id = ?',
             [decoded.email, targetId]
         );
         

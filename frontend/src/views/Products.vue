@@ -136,7 +136,7 @@ watch(() => props.token, (newToken) => {
     justify-content: center; 
     gap: 30px; 
     flex-wrap: wrap; 
-    padding: 20px;
+    padding: 50px;
 }
 .product-card { 
     background-color: white;
