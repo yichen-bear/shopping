@@ -34,6 +34,15 @@
         <router-link to="/" class="back-btn">回到商品頁</router-link>
       </div>
     </div>
+    <br><br>
+    <div class="color-mix-preview" v-if="userCart.length > 0">
+      <h3>購物車調色盤</h3>
+      <div class="mixed-circle" :style="{ backgroundColor: mixedColor }"></div>
+      <p>總計 ${{ totalAmount }}</p>
+      <button @click="handleCheckout" class="checkout-btn">
+        前往結帳
+      </button>
+    </div>
   </div>
 </template>
 
@@ -129,6 +138,36 @@ const removeFromCart = async (productId) => {
   } catch (error) {
     alert("刪除失敗");
   }
+};
+
+const mixedColor = computed(() => {
+  if (userCart.value.length === 0) return 'transparent';
+
+  // 累加所有顏色的分量
+  const totals = userCart.value.reduce((acc, item) => {
+    acc.r += item.red_value;
+    acc.g += item.green_value;
+    acc.b += item.blue_value;
+    return acc;
+  }, { r: 0, g: 0, b: 0 });
+
+  // 取平均值
+  const r = Math.round(totals.r / userCart.value.length);
+  const g = Math.round(totals.g / userCart.value.length);
+  const b = Math.round(totals.b / userCart.value.length);
+
+  return `rgb(${r}, ${g}, ${b})`;
+});
+
+// 計算總金額
+const totalAmount = computed(() => {
+  return userCart.value.reduce((sum, item) => sum + item.price, 0);
+});
+
+// 處理結帳邏輯
+const handleCheckout = () => {
+  alert(`準備進入結帳流程！您的購物車總金額為：$${totalAmount.value}`);
+  // 這裡之後可以連接到金流頁面或訂單成立 API
 };
 
 onMounted(fetchCart);
@@ -266,5 +305,55 @@ onMounted(fetchCart);
 
 .back-btn:hover {
   background-color: #e0e0e0;
+}
+
+.color-mix-preview {
+  text-align: center;
+  margin-bottom: 30px;
+  padding: 20px;
+  background: #fff;
+  border-radius: 15px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+}
+
+.mixed-circle {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  margin: 10px auto;
+  border: 4px solid #fff;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  transition: background-color 0.5s ease; /* 讓顏色變換時有漸變效果 */
+}
+
+/* 在 <style scoped> 內新增或修改 */
+
+.checkout-btn {
+  margin-top: 15px;
+  padding: 12px 40px;
+  background-color: #4a4a4a; /* 使用與 App.vue 一致的深灰色調 */
+  color: white;
+  border: none;
+  border-radius: 30px;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.checkout-btn:hover {
+  background-color: #333;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+}
+
+.checkout-btn:active {
+  transform: translateY(0);
+}
+
+.color-mix-preview h3 {
+  margin-bottom: 5px;
+  color: #333;
 }
 </style>
