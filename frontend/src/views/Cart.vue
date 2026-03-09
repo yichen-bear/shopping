@@ -39,19 +39,19 @@
       <h3>購物車調色盤</h3>
       <div class="mixed-circle" :style="{ backgroundColor: mixedColor }"></div>
       <p>總計 ${{ totalAmount }}</p>
-      <router-link to="/checkout" @click="goToCheckout" class="checkout-btn">
-        前往結帳
-      </router-link>
+      <button @click="goToCheckout" class="checkout-btn">前往結帳</button>
     </div>
   </div>
 </template>
 
 <script setup>
 import { ref, onMounted, computed, inject } from "vue";
+import { useRouter } from "vue-router"; 
 
 const globalLogout = inject('globalLogout');
 const props = defineProps(["token"]);
 const userCart = ref([]);
+const router = useRouter();
 
 // 合併商品並強制排序 (確保位置固定)
 const mergedCart = computed(() => {
@@ -173,13 +173,18 @@ const totalAmount = computed(() => {
 
 // 處理結帳邏輯
 const goToCheckout = () => {
-  // 假設你已經計算好 mixedR, mixedG, mixedB
+  // 從你的 mixedColor 中提取數字 (使用正規表達式)
+  const rgbValues = mixedColor.value.match(/\d+/g);
+  if (!rgbValues || mergedCart.value.length === 0) return;
+
+  const [r, g, b] = rgbValues;
+
   router.push({
     path: '/checkout',
     query: {
-      r: mixedR.value,
-      g: mixedG.value,
-      b: mixedB.value,
+      r: r,
+      g: g,
+      b: b,
       price: totalAmount.value
     }
   });
