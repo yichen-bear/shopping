@@ -47,8 +47,9 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from "vue";
+import { ref, onMounted, computed, inject } from "vue";
 
+const globalLogout = inject('globalLogout');
 const props = defineProps(["token"]);
 const userCart = ref([]);
 
@@ -77,6 +78,12 @@ const fetchCart = async () => {
     const response = await fetch("http://localhost:3000/api/cart/get-cart", {
       headers: { Authorization: props.token },
     });
+    
+    if (response.status === 401 || response.status === 403) {
+      globalLogout(); // Token 過期，直接強制登出
+      return;
+    }
+
     if (response.ok) {
       userCart.value = await response.json();
     }

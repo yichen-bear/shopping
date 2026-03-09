@@ -40,7 +40,7 @@
           :style="{ backgroundColor: mixedColor }"
         ></div>
         <p class="mixer-text">目前購物車色彩</p>
-        <router-link to="/cart" class="go-cart-link">查看詳細</router-link>
+        <router-link to="/cart" class="go-cart-link">前往購物車</router-link>
       </div>
     </div>
 
@@ -139,6 +139,12 @@ const fetchCartForMixer = async () => {
     const response = await fetch("http://localhost:3000/api/cart/get-cart", {
       headers: { Authorization: props.token },
     });
+
+    if (response.status === 401 || response.status === 403) {
+      globalLogout(); 
+      return;
+    }
+
     if (response.ok) {
       userCart.value = await response.json();
     }

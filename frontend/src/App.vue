@@ -20,7 +20,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, provide } from 'vue'
 import { useRouter } from 'vue-router'
 
 const token = ref(localStorage.getItem('myToken') || '')
@@ -29,15 +29,13 @@ const router = useRouter()
 
 const updateToken = (newToken) => {
   token.value = newToken
-  if (newToken) {
-    message.value = '' // 登入後清空訊息
-  }
+  message.value = "" // 登入成功時清除錯誤訊息
 }
 
 const handleLogout = () => {
   localStorage.removeItem('myToken')
   token.value = ''
-  message.value = "已登出"
+  message.value = "登入已過期或已登出，請重新登入"
   
   // 3秒後自動隱藏已登出訊息
   setTimeout(() => {
@@ -46,10 +44,12 @@ const handleLogout = () => {
   
   router.push('/')
 }
+
+provide('globalLogout', handleLogout)
+
 </script>
 
 <style>
-/* ... 保持您的樣式不變 ... */
 body {                
   margin: 0; 
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
