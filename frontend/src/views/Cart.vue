@@ -173,18 +173,18 @@ const totalAmount = computed(() => {
 
 // 處理結帳邏輯
 const goToCheckout = () => {
-  // 從你的 mixedColor 中提取數字 (使用正規表達式)
+  // 使用 match 抓取數字，並確保它們是整數
   const rgbValues = mixedColor.value.match(/\d+/g);
-  if (!rgbValues || mergedCart.value.length === 0) return;
+  if (!rgbValues) return;
 
-  const [r, g, b] = rgbValues;
+  const [r, g, b] = rgbValues.map(Number); // 轉為數字型別
 
   router.push({
     path: '/checkout',
     query: {
-      r: r,
-      g: g,
-      b: b,
+      r,
+      g,
+      b,
       price: totalAmount.value
     }
   });
