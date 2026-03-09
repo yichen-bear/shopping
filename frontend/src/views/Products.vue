@@ -46,8 +46,10 @@ import { ref, onMounted, watch, computed } from "vue";
 const props = defineProps(["token"]);
 const emit = defineEmits(["update-token"]);
 const allProducts = ref([]);
-const userCart = ref([]); // 新增：存儲購物車資料以便計算顏色
-const isCollapsed = ref(false); // 新增：控制收合狀態
+const userCart = ref([]); // 存儲購物車資料以便計算顏色
+const isCollapsed = ref(false); // 控制收合狀態
+import { useRouter } from "vue-router";
+const router = useRouter();
 
 // 取得商品資料
 const fetchProducts = async () => {
