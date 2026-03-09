@@ -7,6 +7,7 @@
         <div class="header-right">
           <router-link to="/cart" class="nav-link" @click="goToCart">🛒</router-link>
           <button v-if="token" @click="handleLogout" class="logout-btn">登出</button>
+          <router-link v-else to="/login" class="nav-link login-text">登入</router-link>
         </div>
       </div>
     </header>
@@ -112,5 +113,19 @@ body {
 .content-container {
   padding-top: 80px;
   padding-bottom: 20px;
+}
+.login-text {
+  background-color: rgba(4, 151, 184, 0.742);
+  padding: 8px 16px;
+  font-size: 14px;
+  border-radius: 20px;
+  border: none;
+  color: white;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.login-text:hover {
+  color: #f6f896; /* 換成你喜歡的深色 */
 }
 </style>
