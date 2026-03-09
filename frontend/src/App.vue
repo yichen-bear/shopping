@@ -48,8 +48,8 @@ const handleLogout = () => {
 const goToCart = (e) => {
   if (!token.value) {
     e.preventDefault(); // 阻止 router-link 跳轉
-    alert("請先登入以使用購物車功能！");
-    router.push('/'); // 導向有登入框的首頁
+    alert("請先登入以查看購物車！");
+    router.push('/login'); // 導向有登入框的首頁
   }
 };
 

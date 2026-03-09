@@ -1,29 +1,5 @@
 <template>
   <div>
-    <div v-if="!token" class="auth-container">
-      <h2>{{ isLoginMode ? "帳號登入" : "註冊新帳號" }}</h2>
-      <form @submit.prevent="handleSubmit">
-        <input
-          v-model="email"
-          type="email"
-          placeholder="Email"
-          required
-        /><br />
-        <input
-          v-model="password"
-          type="password"
-          placeholder="密碼"
-          required
-        /><br />
-        <button type="submit" class="auth-btn">
-          {{ isLoginMode ? "登入" : "註冊" }}
-        </button>
-      </form>
-      <p @click="isLoginMode = !isLoginMode" class="toggle-mode">
-        {{ isLoginMode ? "還沒有帳號？按此註冊" : "已經有帳號？按此登入" }}
-      </p>
-    </div>
-
     <div
       v-if="token"
       class="floating-mixer"
@@ -56,7 +32,7 @@
           ></div>
           <h3>{{ p.name }}</h3>
           <p>價格：${{ p.price }}</p>
-          <button class="add-btn" @click="addToCart(p.id)">加入購物車</button>
+          <button class="add-btn" @click="handleAddToCart(p.id)">加入購物車</button>
         </div>
       </div>
     </div>
@@ -69,10 +45,6 @@ import { ref, onMounted, watch, computed } from "vue";
 // 接收從 App.vue 傳來的 token 和更新函數
 const props = defineProps(["token"]);
 const emit = defineEmits(["update-token"]);
-
-const email = ref("");
-const password = ref("");
-const isLoginMode = ref(true);
 const allProducts = ref([]);
 const userCart = ref([]); // 新增：存儲購物車資料以便計算顏色
 const isCollapsed = ref(false); // 新增：控制收合狀態
@@ -87,35 +59,10 @@ const fetchProducts = async () => {
   }
 };
 
-// 處理登入/註冊
-const handleSubmit = async () => {
-  try {
-    const path = isLoginMode.value ? "login" : "register";
-    const response = await fetch(`http://localhost:3000/api/auth/${path}`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ email: email.value, password: password.value }),
-    });
-
-    const result = await response.json();
-    if (response.ok && isLoginMode.value) {
-      // 成功登入，更新 token
-      localStorage.setItem("myToken", result.token);
-      emit("update-token", result.token); // 通知 App.vue 更新 token
-      fetchProducts(); // 重新抓取商品
-    }
-  } catch (error) {
-    console.error("連線失敗");
-  }
-};
-
 const handleAddToCart = (productId) => {
   if (!props.token) {
-    alert("請先登入後再加入購物車！");
-    // 這裡可以滾動到頁面頂部的登入框，或者觸發你的登入顯示邏輯
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    alert("請先登入以加入購物車！");
+    router.push('/login'); // 未登入則導向登入頁面
     return;
   }
   addToCart(productId); // 原本的加入購物車 API 函式
@@ -197,43 +144,6 @@ watch(
 </script>
 
 <style scoped>
-.auth-container {
-  max-width: 400px;
-  margin: 50px auto;
-  padding: 30px;
-  background-color: white;
-  border-radius: 12px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-  text-align: center;
-}
-
-.auth-container input {
-  width: 100%;
-  padding: 12px;
-  margin-bottom: 15px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  box-sizing: border-box; /* 確保 padding 不會撐開寬度 */
-}
-
-.auth-btn {
-  background-color: #4a4a4a; /* 深灰按鈕 */
-  color: white;
-  border: none;
-  padding: 12px 20px;
-  border-radius: 25px;
-  width: 100%;
-  cursor: pointer;
-  font-weight: bold;
-}
-
-.toggle-mode {
-  cursor: pointer;
-  color: #b08914;
-  font-size: 14px;
-  margin-top: 15px;
-}
-
 .products-grid {
   display: flex;
   justify-content: center;
