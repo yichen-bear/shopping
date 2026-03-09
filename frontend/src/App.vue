@@ -5,7 +5,7 @@
         <router-link to="/" class="logo">🎨 顏色購物站</router-link>
         
         <div class="header-right">
-          <router-link to="/cart" class="nav-link">🛒</router-link>
+          <router-link to="/cart" class="nav-link" @click="goToCart">🛒</router-link>
           <button v-if="token" @click="handleLogout" class="logout-btn">登出</button>
         </div>
       </div>
@@ -44,6 +44,14 @@ const handleLogout = () => {
   
   router.push('/')
 }
+
+const goToCart = (e) => {
+  if (!token.value) {
+    e.preventDefault(); // 阻止 router-link 跳轉
+    alert("請先登入以使用購物車功能！");
+    router.push('/'); // 導向有登入框的首頁
+  }
+};
 
 provide('globalLogout', handleLogout)
 

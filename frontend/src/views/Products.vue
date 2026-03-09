@@ -44,7 +44,7 @@
       </div>
     </div>
 
-    <div v-if="token">
+    <div>
       <h2>精選商品</h2>
       <div class="products-grid">
         <div v-for="p in allProducts" :key="p.id" class="product-card">
@@ -111,6 +111,16 @@ const handleSubmit = async () => {
   }
 };
 
+const handleAddToCart = (productId) => {
+  if (!props.token) {
+    alert("請先登入後再加入購物車！");
+    // 這裡可以滾動到頁面頂部的登入框，或者觸發你的登入顯示邏輯
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    return;
+  }
+  addToCart(productId); // 原本的加入購物車 API 函式
+};
+
 const addToCart = async (productId) => {
   if (!props.token) return;
   try {
@@ -171,9 +181,9 @@ const mixedColor = computed(() => {
 });
 
 onMounted(() => {
+  fetchProducts(); 
   if (props.token) {
-    fetchProducts();
-    fetchCartForMixer(); // 初始抓取
+    fetchCartForMixer();
   }
 });
 
