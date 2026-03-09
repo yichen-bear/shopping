@@ -14,4 +14,9 @@ router.get('/', async (req, res) => {
   }
 });
 
+router.post('/add-new', async (req, res) => {
+  const { name, price, r, g, b } = req.body;
+  // 這裡執行 INSERT INTO products ...
+});
+
 module.exports = router;

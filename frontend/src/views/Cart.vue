@@ -39,9 +39,9 @@
       <h3>購物車調色盤</h3>
       <div class="mixed-circle" :style="{ backgroundColor: mixedColor }"></div>
       <p>總計 ${{ totalAmount }}</p>
-      <button @click="handleCheckout" class="checkout-btn">
+      <router-link to="/checkout" @click="goToCheckout" class="checkout-btn">
         前往結帳
-      </button>
+      </router-link>
     </div>
   </div>
 </template>
@@ -172,9 +172,17 @@ const totalAmount = computed(() => {
 });
 
 // 處理結帳邏輯
-const handleCheckout = () => {
-  alert(`準備進入結帳流程！您的購物車總金額為：$${totalAmount.value}`);
-  // 這裡之後可以連接到金流頁面或訂單成立 API
+const goToCheckout = () => {
+  // 假設你已經計算好 mixedR, mixedG, mixedB
+  router.push({
+    path: '/checkout',
+    query: {
+      r: mixedR.value,
+      g: mixedG.value,
+      b: mixedB.value,
+      price: totalAmount.value
+    }
+  });
 };
 
 onMounted(fetchCart);
@@ -336,6 +344,7 @@ onMounted(fetchCart);
 /* 在 <style scoped> 內新增或修改 */
 
 .checkout-btn {
+  text-decoration: none;
   margin-top: 15px;
   padding: 12px 40px;
   background-color: #4a4a4a; /* 使用與 App.vue 一致的深灰色調 */
@@ -350,17 +359,20 @@ onMounted(fetchCart);
 }
 
 .checkout-btn:hover {
+  text-decoration: none;
   background-color: #333;
   transform: translateY(-2px);
   box-shadow: 0 6px 12px rgba(0,0,0,0.15);
 }
 
 .checkout-btn:active {
+  text-decoration: none;
   transform: translateY(0);
 }
 
 .color-mix-preview h3 {
   margin-bottom: 5px;
+  text-decoration: none;
   color: #333;
 }
 </style>
