@@ -22,8 +22,16 @@
 
     <div>
       <h2>精選商品</h2>
+      <div class="search-container">
+        <input 
+          v-model="searchQuery" 
+          type="text" 
+          placeholder="搜尋商品名稱" 
+          class="search-input"
+        />
+      </div>
       <div class="products-grid">
-        <div v-for="p in allProducts" :key="p.id" class="product-card">
+        <div v-for="p in filteredProducts" :key="p.id" class="product-card">
           <div
             class="color-box"
             :style="{
@@ -41,7 +49,8 @@
 
 <script setup>
 import { ref, onMounted, watch, computed, inject } from "vue";
-import { useRouter } from "vue-router"
+import { useRouter } from "vue-router";
+import { onBeforeRouteUpdate } from "vue-router";
 
 // 接收從 App.vue 傳來的 token 和更新函數
 const props = defineProps(["token"]);
@@ -51,16 +60,17 @@ const userCart = ref([]); // 存儲購物車資料以便計算顏色
 const isCollapsed = ref(false); // 控制收合狀態
 const router = useRouter();
 const globalLogout = inject('globalLogout');
+const searchQuery = ref("");
 
 // 取得商品資料
 const fetchProducts = async () => {
-  try {
-    const response = await fetch("http://localhost:3000/api/products");
-    allProducts.value = await response.json();
-  } catch (error) {
-    console.error("商品抓取失敗");
-  }
+  const res = await fetch("http://localhost:3000/api/products");
+  allProducts.value = await res.json();
 };
+
+onMounted(() => {
+  fetchProducts(); // 確保進場就抓
+});
 
 const handleAddToCart = (productId) => {
   if (!props.token) {
@@ -144,6 +154,21 @@ watch(
     if (newToken) fetchProducts();
   },
 );
+
+// 定義過濾後的清單
+const filteredProducts = computed(() => {
+  // 如果搜尋欄是空的，就顯示全部
+  if (!searchQuery.value.trim()) {
+    return allProducts.value;
+  }
+  
+  // 將搜尋文字轉小寫，進行模糊比對
+  const query = searchQuery.value.toLowerCase();
+  
+  return allProducts.value.filter(p => {
+    return p.name.toLowerCase().includes(query);
+  });
+});
 </script>
 
 <style scoped>
@@ -278,5 +303,26 @@ h2 {
   color: white;
   cursor: pointer;
   padding: 0;
+}
+
+.search-container {
+  margin-bottom: 30px;
+  display: flex;
+  justify-content: center;
+}
+
+.search-input {
+  width: 100%;
+  max-width: 400px;
+  padding: 12px 20px;
+  border: 2px solid #eee;
+  border-radius: 25px;
+  font-size: 16px;
+  outline: none;
+  transition: border-color 0.3s;
+}
+
+.search-input:focus {
+  border-color: #4a4a4a;
 }
 </style>
