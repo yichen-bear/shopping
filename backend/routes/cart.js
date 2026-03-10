@@ -51,6 +51,27 @@ router.get('/get-cart', async (req, res) => {
     }
 });
 
+// 清空購物車 API
+router.delete('/clear-cart', async (req, res) => {
+    const token = req.headers['authorization'];
+    if (!token) return res.status(401).json({ message: "請先登入！" });
+
+    try {
+        const decoded = jwt.verify(token, JWT_SECRET);
+        
+        // 刪除該使用者在 carts 資料表中的所有紀錄
+        await db.execute(
+            'DELETE FROM carts WHERE user_email = ?',
+            [decoded.email]
+        );
+        
+        res.json({ message: "購物車已清空！" });
+    } catch (err) {
+        console.error(err);
+        res.status(403).json({ message: "驗證失效" });
+    }
+});
+
 // 從購物車移除 API
 router.delete('/:productId', async (req, res) => {
     const token = req.headers['authorization'];

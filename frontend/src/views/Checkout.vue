@@ -52,7 +52,6 @@ import { useRoute, useRouter } from "vue-router";
 
 const route = useRoute();
 const router = useRouter();
-const isNewColor = ref(false);
 const displayPrice = ref(0); // 用來顯示最終價格
 
 const r = ref(Number(route.query.r));
@@ -85,10 +84,30 @@ const checkColorExistence = async () => {
 
 onMounted(checkColorExistence);
 
-const confirmPurchase = (isNew) => {
+const confirmPurchase = async (isNew) => {
   if (isNew && !newName.value) return alert("請輸入名稱");
-  alert("購買成功！");
-  router.push("/");
+
+  try {
+    // 先呼叫清空購物車的 API
+    const token = localStorage.getItem("myToken");
+    const response = await fetch("http://localhost:3000/api/cart/clear-cart", {
+      method: "DELETE",
+      headers: { 
+        "Authorization": token 
+      }
+    });
+
+    if (response.ok) {
+      // 清空成功後，再顯示成功訊息並跳轉
+      alert("購買成功！購物車已清空。");
+      router.push("/");
+    } else {
+      alert("結帳過程出現問題，請稍後再試。");
+    }
+  } catch (error) {
+    console.error("結帳失敗:", error);
+    alert("連線伺服器失敗");
+  }
 };
 </script>
 

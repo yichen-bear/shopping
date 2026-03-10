@@ -124,8 +124,4 @@ body {
   cursor: pointer;
   text-decoration: none;
 }
-
-.login-text:hover {
-  color: #f6f896; /* 換成你喜歡的深色 */
-}
 </style>

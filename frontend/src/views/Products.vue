@@ -40,7 +40,8 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watch, computed } from "vue";
+import { ref, onMounted, watch, computed, inject } from "vue";
+import { useRouter } from "vue-router"
 
 // 接收從 App.vue 傳來的 token 和更新函數
 const props = defineProps(["token"]);
@@ -48,8 +49,8 @@ const emit = defineEmits(["update-token"]);
 const allProducts = ref([]);
 const userCart = ref([]); // 存儲購物車資料以便計算顏色
 const isCollapsed = ref(false); // 控制收合狀態
-import { useRouter } from "vue-router";
 const router = useRouter();
+const globalLogout = inject('globalLogout');
 
 // 取得商品資料
 const fetchProducts = async () => {
