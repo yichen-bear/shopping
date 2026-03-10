@@ -14,9 +14,28 @@ router.get('/', async (req, res) => {
   }
 });
 
+// 新增商品到清單的 API
 router.post('/add-new', async (req, res) => {
-  const { name, price, r, g, b } = req.body;
-  // 這裡執行 INSERT INTO products ...
+    const { name, price, r, g, b } = req.body;
+
+    // 基本檢查，確保資料都有傳過來
+    if (!name || price === undefined) {
+        return res.status(400).json({ message: "資料不完整" });
+    }
+
+    try {
+        // 將新顏色寫入 products 資料表
+        // 注意：這裡使用的欄位名稱要對應你的資料庫 (red_value, green_value, blue_value)
+        await db.execute(
+            'INSERT INTO products (name, price, red_value, green_value, blue_value) VALUES (?, ?, ?, ?, ?)',
+            [name, price, r, g, b]
+        );
+
+        res.json({ message: "新顏色已成功上架！" });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: "上架失敗，可能名稱重複或資料庫錯誤" });
+    }
 });
 
 // 新增一個檢查顏色是否存在的 API

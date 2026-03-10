@@ -64,7 +64,6 @@ const newName = ref("");
 
 const checkColorExistence = async () => {
   try {
-    // 呼叫我們剛剛在後端寫好的那個 API
     const res = await fetch(`http://localhost:3000/api/products/check-color?r=${r.value}&g=${g.value}&b=${b.value}`);
     const data = await res.json();
     
@@ -88,25 +87,42 @@ const confirmPurchase = async (isNew) => {
   if (isNew && !newName.value) return alert("請輸入名稱");
 
   try {
-    // 先呼叫清空購物車的 API
     const token = localStorage.getItem("myToken");
+
+    // 如果是新顏色執行上架
+    if (isNew) {
+      const addResponse = await fetch("http://localhost:3000/api/products/add-new", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: newName.value,
+          price: totalPrice.value, // 傳送未打折前的原始價格
+          r: r.value,
+          g: g.value,
+          b: b.value
+        })
+      });
+
+      if (!addResponse.ok) {
+        throw new Error("商品上架失敗");
+      }
+    }
+
+    // 清空購物車
     const response = await fetch("http://localhost:3000/api/cart/clear-cart", {
       method: "DELETE",
-      headers: { 
-        "Authorization": token 
-      }
+      headers: { "Authorization": token }
     });
 
     if (response.ok) {
-      // 清空成功後，再顯示成功訊息並跳轉
-      alert("購買成功！購物車已清空。");
+      alert(isNew ? `恭喜！「${newName.value}」已永久上架並購買成功！` : "購買成功！");
       router.push("/");
     } else {
-      alert("結帳過程出現問題，請稍後再試。");
+      alert("結帳過程出現問題");
     }
   } catch (error) {
-    console.error("結帳失敗:", error);
-    alert("連線伺服器失敗");
+    console.error("操作失敗:", error);
+    alert("系統忙碌中，請稍後再試");
   }
 };
 </script>
