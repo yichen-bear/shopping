@@ -1,50 +1,54 @@
 <template>
-  <div>
-    <div
-      v-if="token"
-      class="floating-mixer"
-      :class="{ 'is-collapsed': isCollapsed }"
-    >
-      <div class="mixer-header" @click="isCollapsed = !isCollapsed">
-        <span>混合預覽</span>
-        <button class="toggle-icon">{{ isCollapsed ? "▲" : "▼" }}</button>
-      </div>
+	<div>
+		<div
+			v-if="token"
+			class="floating-mixer"
+			:class="{ 'is-collapsed': isCollapsed }"
+		>
+			<div class="mixer-header" @click="isCollapsed = !isCollapsed">
+				<span>混合預覽</span>
+				<button class="toggle-icon">
+					{{ isCollapsed ? "▲" : "▼" }}
+				</button>
+			</div>
 
-      <div v-show="!isCollapsed" class="mixer-content">
-        <div
-          class="mixed-circle-small"
-          :style="{ backgroundColor: mixedColor }"
-        ></div>
-        <p class="mixer-text">目前購物車色彩</p>
-        <router-link to="/cart" class="go-cart-link">前往購物車</router-link>
-      </div>
-    </div>
+			<div v-show="!isCollapsed" class="mixer-content">
+				<div
+					class="mixed-circle-small"
+					:style="{ backgroundColor: mixedColor }"
+				></div>
+				<p class="mixer-text">目前購物車色彩</p>
+				<router-link to="/cart" class="go-cart-link">前往購物車</router-link>
+			</div>
+		</div>
 
-    <div>
-      <h2>精選商品</h2>
-      <div class="search-container">
-        <input 
-          v-model="searchQuery" 
-          type="text" 
-          placeholder="搜尋商品名稱" 
-          class="search-input"
-        />
-      </div>
-      <div class="products-grid">
-        <div v-for="p in filteredProducts" :key="p.id" class="product-card">
-          <div
-            class="color-box"
-            :style="{
-              backgroundColor: `rgb(${p.red_value}, ${p.green_value}, ${p.blue_value})`,
-            }"
-          ></div>
-          <h3>{{ p.name }}</h3>
-          <p>價格：${{ p.price }}</p>
-          <button class="add-btn" @click="handleAddToCart(p.id)">加入購物車</button>
-        </div>
-      </div>
-    </div>
-  </div>
+		<div>
+			<h2>精選商品</h2>
+			<div class="search-container">
+				<input
+					v-model="searchQuery"
+					type="text"
+					placeholder="搜尋商品名稱"
+					class="search-input"
+				/>
+			</div>
+			<div class="products-grid">
+				<div v-for="p in filteredProducts" :key="p.id" class="product-card">
+					<div
+						class="color-box"
+						:style="{
+							backgroundColor: `rgb(${p.red_value}, ${p.green_value}, ${p.blue_value})`,
+						}"
+					></div>
+					<h3>{{ p.name }}</h3>
+					<p>價格：${{ p.price }}</p>
+					<button class="add-btn" @click="handleAddToCart(p.id)">
+						加入購物車
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
 </template>
 
 <script setup>
@@ -59,270 +63,270 @@ const allProducts = ref([]);
 const userCart = ref([]); // 存儲購物車資料以便計算顏色
 const isCollapsed = ref(false); // 控制收合狀態
 const router = useRouter();
-const globalLogout = inject('globalLogout');
+const globalLogout = inject("globalLogout");
 const searchQuery = ref("");
 
 // 取得商品資料
 const fetchProducts = async () => {
-  const res = await fetch("http://localhost:3000/api/products");
-  allProducts.value = await res.json();
+	const res = await fetch("http://localhost:3000/api/products");
+	allProducts.value = await res.json();
 };
 
 onMounted(() => {
-  fetchProducts(); // 確保進場就抓
+	fetchProducts(); // 確保進場就抓
 });
 
 const handleAddToCart = (productId) => {
-  if (!props.token) {
-    alert("請先登入以加入購物車！");
-    router.push('/login'); // 未登入則導向登入頁面
-    return;
-  }
-  addToCart(productId); // 原本的加入購物車 API 函式
+	if (!props.token) {
+		alert("請先登入以加入購物車！");
+		router.push("/login"); // 未登入則導向登入頁面
+		return;
+	}
+	addToCart(productId); // 原本的加入購物車 API 函式
 };
 
 const addToCart = async (productId) => {
-  if (!props.token) return;
-  try {
-    const response = await fetch("http://localhost:3000/api/cart", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: props.token,
-      },
-      body: JSON.stringify({ productId }),
-    });
-    const result = await response.json();
-    if (response.ok) {
-      fetchCartForMixer(); // 加入後立即更新混合色
-    }
-    alert(result.message);
-  } catch (error) {
-    alert("加入失敗");
-  }
+	if (!props.token) return;
+	try {
+		const response = await fetch("http://localhost:3000/api/cart", {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+				Authorization: props.token,
+			},
+			body: JSON.stringify({ productId }),
+		});
+		const result = await response.json();
+		if (response.ok) {
+			fetchCartForMixer(); // 加入後立即更新混合色
+		}
+		alert(result.message);
+	} catch (error) {
+		alert("加入失敗");
+	}
 };
 
 // 抓取購物車資料的函式
 const fetchCartForMixer = async () => {
-  if (!props.token) return;
-  try {
-    const response = await fetch("http://localhost:3000/api/cart/get-cart", {
-      headers: { Authorization: props.token },
-    });
+	if (!props.token) return;
+	try {
+		const response = await fetch("http://localhost:3000/api/cart/get-cart", {
+			headers: { Authorization: props.token },
+		});
 
-    if (response.status === 401 || response.status === 403) {
-      globalLogout(); 
-      return;
-    }
+		if (response.status === 401 || response.status === 403) {
+			globalLogout();
+			return;
+		}
 
-    if (response.ok) {
-      userCart.value = await response.json();
-    }
-  } catch (error) {
-    console.error("小視窗資料更新失敗");
-  }
+		if (response.ok) {
+			userCart.value = await response.json();
+		}
+	} catch (error) {
+		console.error("小視窗資料更新失敗");
+	}
 };
 
 // 計算混合色
 const mixedColor = computed(() => {
-  if (userCart.value.length === 0) return "#eee";
-  const totals = userCart.value.reduce(
-    (acc, item) => {
-      acc.r += item.red_value;
-      acc.g += item.green_value;
-      acc.b += item.blue_value;
-      return acc;
-    },
-    { r: 0, g: 0, b: 0 },
-  );
+	if (userCart.value.length === 0) return "#eee";
+	const totals = userCart.value.reduce(
+		(acc, item) => {
+			acc.r += item.red_value;
+			acc.g += item.green_value;
+			acc.b += item.blue_value;
+			return acc;
+		},
+		{ r: 0, g: 0, b: 0 },
+	);
 
-  const n = userCart.value.length;
-  return `rgb(${Math.round(totals.r / n)}, ${Math.round(totals.g / n)}, ${Math.round(totals.b / n)})`;
+	const n = userCart.value.length;
+	return `rgb(${Math.round(totals.r / n)}, ${Math.round(totals.g / n)}, ${Math.round(totals.b / n)})`;
 });
 
 onMounted(() => {
-  fetchProducts(); 
-  if (props.token) {
-    fetchCartForMixer();
-  }
+	fetchProducts();
+	if (props.token) {
+		fetchCartForMixer();
+	}
 });
 
 // 當 token 變化時重新抓取商品
 watch(
-  () => props.token,
-  (newToken) => {
-    if (newToken) fetchProducts();
-  },
+	() => props.token,
+	(newToken) => {
+		if (newToken) fetchProducts();
+	},
 );
 
 // 定義過濾後的清單
 const filteredProducts = computed(() => {
-  // 如果搜尋欄是空的，就顯示全部
-  if (!searchQuery.value.trim()) {
-    return allProducts.value;
-  }
-  
-  // 將搜尋文字轉小寫，進行模糊比對
-  const query = searchQuery.value.toLowerCase();
-  
-  return allProducts.value.filter(p => {
-    return p.name.toLowerCase().includes(query);
-  });
+	// 如果搜尋欄是空的，就顯示全部
+	if (!searchQuery.value.trim()) {
+		return allProducts.value;
+	}
+
+	// 將搜尋文字轉小寫，進行模糊比對
+	const query = searchQuery.value.toLowerCase();
+
+	return allProducts.value.filter((p) => {
+		return p.name.toLowerCase().includes(query);
+	});
 });
 </script>
 
 <style scoped>
 .products-grid {
-  display: flex;
-  justify-content: center;
-  gap: 30px;
-  flex-wrap: wrap;
-  padding: 50px;
+	display: flex;
+	justify-content: center;
+	gap: 30px;
+	flex-wrap: wrap;
+	padding: 50px;
 }
 
 .product-card {
-  background-color: white;
-  border: 1px solid #eee;
-  padding: 20px;
-  border-radius: 12px;
-  width: 220px;
-  text-align: center;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-  transition: transform 0.2s;
+	background-color: white;
+	border: 1px solid #eee;
+	padding: 20px;
+	border-radius: 12px;
+	width: 220px;
+	text-align: center;
+	box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+	transition: transform 0.2s;
 }
 
 .product-card:hover {
-  transform: translateY(-5px);
+	transform: translateY(-5px);
 }
 
 .color-box {
-  width: 120px;
-  height: 120px;
-  margin: 0 auto 15px auto;
-  border: none;
-  border-radius: 10px;
-  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.1);
+	width: 120px;
+	height: 120px;
+	margin: 0 auto 15px auto;
+	border: none;
+	border-radius: 10px;
+	box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
 h3 {
-  margin: 10px 0;
-  color: #333;
+	margin: 10px 0;
+	color: #333;
 }
 
 p {
-  margin: 5px 0;
-  color: #666;
+	margin: 5px 0;
+	color: #666;
 }
 
 h2 {
-  text-align: center;
-  font-size: 30px;
+	text-align: center;
+	font-size: 30px;
 }
 
 .add-btn {
-  background-color: #b08914;
-  color: white;
-  border: none;
-  padding: 12px 20px;
-  border-radius: 25px;
-  cursor: pointer;
-  width: 100%;
-  font-weight: bold;
-  transition: background-color 0.3s;
-  margin-top: 15px;
+	background-color: #b08914;
+	color: white;
+	border: none;
+	padding: 12px 20px;
+	border-radius: 25px;
+	cursor: pointer;
+	width: 100%;
+	font-weight: bold;
+	transition: background-color 0.3s;
+	margin-top: 15px;
 }
 
 .add-btn:hover {
-  background-color: #86680e;
+	background-color: #86680e;
 }
 
 .floating-mixer {
-  position: fixed;
-  top: 80px; /* 避開 header 的 60px */
-  right: 20px;
-  width: 150px;
-  background-color: white;
-  border-radius: 12px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  z-index: 999;
-  overflow: hidden;
-  transition: all 0.3s ease;
+	position: fixed;
+	top: 80px; /* 避開 header 的 60px */
+	right: 20px;
+	width: 150px;
+	background-color: white;
+	border-radius: 12px;
+	box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+	z-index: 999;
+	overflow: hidden;
+	transition: all 0.3s ease;
 }
 
 .floating-mixer.is-collapsed {
-  width: 120px;
+	width: 120px;
 }
 
 .mixer-header {
-  background-color: #4a4a4a; /* 使用與 App.vue 一致的色調 */
-  color: white;
-  padding: 8px 12px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  cursor: pointer;
-  font-size: 13px;
-  font-weight: bold;
+	background-color: #4a4a4a; /* 使用與 App.vue 一致的色調 */
+	color: white;
+	padding: 8px 12px;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	cursor: pointer;
+	font-size: 13px;
+	font-weight: bold;
 }
 
 .mixer-content {
-  padding: 15px;
-  text-align: center;
+	padding: 15px;
+	text-align: center;
 }
 
 .mixed-circle-small {
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  margin: 0 auto 10px auto;
-  border: 2px solid #eee;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  transition: background-color 0.5s ease;
+	width: 50px;
+	height: 50px;
+	border-radius: 50%;
+	margin: 0 auto 10px auto;
+	border: 2px solid #eee;
+	box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+	transition: background-color 0.5s ease;
 }
 
 .mixer-text {
-  font-size: 12px;
-  color: #666;
-  margin: 0 0 8px 0;
+	font-size: 12px;
+	color: #666;
+	margin: 0 0 8px 0;
 }
 
 .go-cart-link {
-  font-size: 12px;
-  color: #b08914;
-  text-decoration: none;
-  font-weight: bold;
+	font-size: 12px;
+	color: #b08914;
+	text-decoration: none;
+	font-weight: bold;
 }
 
 .go-cart-link:hover {
-  text-decoration: underline;
+	text-decoration: underline;
 }
 
 .toggle-icon {
-  background: none;
-  border: none;
-  color: white;
-  cursor: pointer;
-  padding: 0;
+	background: none;
+	border: none;
+	color: white;
+	cursor: pointer;
+	padding: 0;
 }
 
 .search-container {
-  margin-bottom: 30px;
-  display: flex;
-  justify-content: center;
+	margin-bottom: 30px;
+	display: flex;
+	justify-content: center;
 }
 
 .search-input {
-  width: 100%;
-  max-width: 400px;
-  padding: 12px 20px;
-  border: 2px solid #eee;
-  border-radius: 25px;
-  font-size: 16px;
-  outline: none;
-  transition: border-color 0.3s;
+	width: 100%;
+	max-width: 400px;
+	padding: 12px 20px;
+	border: 2px solid #eee;
+	border-radius: 25px;
+	font-size: 16px;
+	outline: none;
+	transition: border-color 0.3s;
 }
 
 .search-input:focus {
-  border-color: #4a4a4a;
+	border-color: #4a4a4a;
 }
 </style>

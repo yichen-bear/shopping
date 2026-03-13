@@ -1,14 +1,16 @@
-const mysql = require('mysql2');
+require('dotenv').config(); // 管理密碼的套件
+const mysql = require('mysql2/promise');
 
-// 建立連線池 (Pool)，效率比單一連線更好
-const pool = mysql.createPool({
-    host: 'localhost',
-    user: 'root',         // MySQL 帳號
-    password: 'Sophie4321$@', // MySQL 密碼
-    database: 'my_shop',
+// 建立連線池
+const db = mysql.createPool({
+    host: process.env.DB_HOST,
+    port: process.env.DB_PORT,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASS,
+    database: process.env.DB_NAME,
     waitForConnections: true,
-    connectionLimit: 10
+    connectionLimit: 10,
+    queueLimit: 0
 });
 
-// 使用 Promise 版本，方便配合 async/await
-module.exports = pool.promise();
+module.exports = db;

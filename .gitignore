@@ -9,3 +9,6 @@ dist/
 
 # 忽略系統雜物
 .DS_Store
+
+# 忽略資料庫上傳資料
+db_backups/
