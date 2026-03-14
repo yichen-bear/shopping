@@ -116,7 +116,7 @@ const confirmPurchase = async (isNew) => {
 
     if (response.ok) {
       alert(isNew ? `恭喜！「${newName.value}」已永久上架並購買成功！` : "購買成功！");
-      router.push("/");
+      router.push("/products");
     } else {
       alert("結帳過程出現問題");
     }
