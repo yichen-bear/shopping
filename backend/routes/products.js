@@ -61,4 +61,22 @@ router.get('/check-color', async (req, res) => {
   }
 });
 
+// 根據 ID 取得特定商品的詳細資訊
+router.get('/:id', async (req, res) => {
+  const productId = req.params.id; // 取得 URL 中的 ID 參數
+  try {
+    // 從 MySQL 查詢該 ID 的商品
+    const [rows] = await db.execute('SELECT * FROM products WHERE id = ?', [productId]);
+    
+    if (rows.length > 0) {
+      res.json(rows[0]); // 回傳找到的單一商品物件
+    } else {
+      res.status(404).json({ message: "找不到該商品" });
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "抓取詳細資訊失敗" });
+  }
+});
+
 module.exports = router;

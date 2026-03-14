@@ -8,7 +8,7 @@
 
     <div v-else>
       <div v-if="mergedCart.length > 0" class="cart-grid">
-        <div v-for="item in mergedCart" :key="item.id" class="cart-item-card">
+        <div v-for="item in mergedCart" :key="item.id" class="cart-item-card" @click="goToCheckout(item.id)">
           <button @click="removeFromCart(item.id)" class="delete-x-btn" title="刪除全部">×</button>
 
           <div
@@ -188,6 +188,10 @@ const goToCheckout = () => {
       price: totalAmount.value
     }
   });
+};
+
+const goToDetail = (id) => {
+  router.push(`/product/${id}`);
 };
 
 onMounted(fetchCart);

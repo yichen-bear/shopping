@@ -33,7 +33,12 @@
 				/>
 			</div>
 			<div class="products-grid">
-				<div v-for="p in filteredProducts" :key="p.id" class="product-card">
+				<div
+					v-for="p in filteredProducts"
+					:key="p.id"
+					class="product-card"
+					@click="goToDetail(p.id)"
+				>
 					<div
 						class="color-box"
 						:style="{
@@ -74,6 +79,9 @@ const fetchProducts = async () => {
 
 onMounted(() => {
 	fetchProducts(); // 確保進場就抓
+	if (props.token) {
+		fetchCartForMixer();
+	}
 });
 
 const handleAddToCart = (productId) => {
@@ -144,13 +152,6 @@ const mixedColor = computed(() => {
 	return `rgb(${Math.round(totals.r / n)}, ${Math.round(totals.g / n)}, ${Math.round(totals.b / n)})`;
 });
 
-onMounted(() => {
-	fetchProducts();
-	if (props.token) {
-		fetchCartForMixer();
-	}
-});
-
 // 當 token 變化時重新抓取商品
 watch(
 	() => props.token,
@@ -173,6 +174,11 @@ const filteredProducts = computed(() => {
 		return p.name.toLowerCase().includes(query);
 	});
 });
+
+// 跳轉到對應 ID 的詳細頁面
+const goToDetail = (id) => {
+	router.push(`/product/${id}`);
+};
 </script>
 
 <style scoped>
