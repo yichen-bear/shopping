@@ -26,7 +26,7 @@
     <div class="feature-grid">
       <div class="feature-card">
         <h3>🎨 經典選色</h3>
-        <p>精選數十種高品質 RGB 色彩，滿足你的設計需求。</p>
+        <p>精選數種 RGB 色彩，滿足你的設計需求。</p>
       </div>
       <div class="feature-card">
         <h3>🧪 自由實驗</h3>
@@ -81,7 +81,7 @@ const startShopping = () => {
   margin: 0 -20px;
 }
 .c1 { background: #ff5f6d; }
-.c2 { background: #ffc371; }
+.c2 { background: #36c831; }
 .c3 { background: #2193b0; }
 
 .title {
