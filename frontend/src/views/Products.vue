@@ -47,7 +47,7 @@
 					></div>
 					<h3>{{ p.name }}</h3>
 					<p>價格：${{ p.price }}</p>
-					<button class="add-btn" @click="handleAddToCart(p.id)">
+					<button class="add-btn" @click.stop="handleAddToCart(p.id)">
 						加入購物車
 					</button>
 				</div>

@@ -8,8 +8,8 @@
 
     <div v-else>
       <div v-if="mergedCart.length > 0" class="cart-grid">
-        <div v-for="item in mergedCart" :key="item.id" class="cart-item-card" @click="goToCheckout(item.id)">
-          <button @click="removeFromCart(item.id)" class="delete-x-btn" title="刪除全部">×</button>
+        <div v-for="item in mergedCart" :key="item.id" class="cart-item-card" @click="goToDetail(item.id)">
+          <button @click.stop="removeFromCart(item.id)" class="delete-x-btn" title="刪除全部">×</button>
 
           <div
             class="small-color-box"
@@ -21,9 +21,9 @@
             <p class="item-price">${{ item.price }}</p>
             
             <div class="quantity-control">
-              <button @click="changeQty(item.id, -1)" class="qty-btn" :disabled="item.quantity <= 1">−</button>
+              <button @click.stop="changeQty(item.id, -1)" class="qty-btn" :disabled="item.quantity <= 1">−</button>
               <span class="qty-number">{{ item.quantity }}</span>
-              <button @click="changeQty(item.id, 1)" class="qty-btn">+</button>
+              <button @click.stop="changeQty(item.id, 1)" class="qty-btn">+</button>
             </div>
           </div>
         </div>
