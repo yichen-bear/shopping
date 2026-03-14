@@ -14,7 +14,7 @@
       <hr />
 
       <div v-if="isNewColor" class="status-section discovery">
-        <h3>✨ 發現新配方！</h3>
+        <h3>✨ 發現新顏色！</h3>
         <p>這是資料庫中沒有的新顏色，享有 7 折優惠。</p>
         <p class="price-display">
           <span class="old-price">${{ totalPrice }}</span>

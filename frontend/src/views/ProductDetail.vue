@@ -15,14 +15,12 @@
 
       <hr />
 
-      <div class="info-section">
+      <div>
         <h2 class="product-name">{{ product.name }}</h2>
         <p class="price-tag">售價：<span class="amount">${{ product.price }}</span></p>
-        
-        <div class="description">
-          <p>這款色彩具有獨特的視覺魅力，適合用於各種設計場景。</p>
-        </div>
-
+        <p v-if="token" class="cart-status">
+            購物車內已有：<strong>{{ cartQuantity }}</strong> 件
+        </p>
         <button @click="handleAddToCart" class="add-cart-btn">
           加入購物車
         </button>
@@ -35,15 +33,38 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import { useRoute } from 'vue-router';
 
 const route = useRoute();
 const product = ref(null);
-const token = localStorage.getItem("myToken"); // 根據你的 Login.vue 命名
+const userCart = ref([]);
+const token = localStorage.getItem("myToken");
+
+const cartQuantity = computed(() => {
+  if (!product.value || userCart.value.length === 0) return 0;
+  // 篩選出 ID 相同的項目並回傳長度
+  return userCart.value.filter(item => item.id === product.value.id).length;
+});
+
+const fetchCart = async () => {
+  if (!token) return;
+  try {
+    const response = await fetch("http://localhost:3000/api/cart/get-cart", {
+      headers: { Authorization: token },
+    });
+    if (response.ok) {
+      userCart.value = await response.json(); // 取得原始陣列
+    }
+  } catch (error) {
+    console.error("購物車抓取失敗");
+  }
+};
 
 onMounted(async () => {
   const id = route.params.id;
+  // 同時抓取商品資訊與購物車狀態
+  fetchCart(); 
   try {
     const response = await fetch(`http://localhost:3000/api/products/${id}`);
     if (response.ok) {
@@ -64,11 +85,14 @@ const handleAddToCart = async () => {
       method: 'POST',
       headers: { 
         'Content-Type': 'application/json',
-        'Authorization': token // 根據你的 cart.js 邏輯
+        'Authorization': token 
       },
       body: JSON.stringify({ productId: product.value.id })
     });
     const result = await response.json();
+    if (response.ok) {
+      fetchCart(); // 加入成功後，重新整理數量顯示
+    }
     alert(result.message);
   } catch (error) {
     alert("操作失敗");
@@ -136,6 +160,7 @@ hr {
 }
 
 .price-tag {
+  margin-bottom: 5px;
   font-size: 20px;
   color: #4a4a4a;
 }
@@ -144,12 +169,6 @@ hr {
   font-size: 26px;
   font-weight: bold;
   color: #d35400; /* 參考你 Checkout.vue 的價格顏色 */
-}
-
-.description {
-  margin: 20px 0;
-  color: #777;
-  line-height: 1.6;
 }
 
 .add-cart-btn {
@@ -168,5 +187,20 @@ hr {
 .add-cart-btn:hover {
   transform: translateY(-2px);
   background-color: #333;
+}
+
+.cart-status {
+  background-color: #fcf8e3;
+  color: #8a6d3b;
+  padding: 8px;
+  border-radius: 8px;
+  display: inline-block;
+  margin-bottom: 20px;
+  font-size: 14px;
+}
+
+.cart-status strong {
+  font-size: 18px;
+  color: #b08914;
 }
 </style>
