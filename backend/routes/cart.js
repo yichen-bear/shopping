@@ -124,4 +124,31 @@ router.delete('/remove-one/:productId', async (req, res) => {
     }
 });
 
+// 結帳時寫入資料庫
+router.post('/confirm', async (req, res) => {
+    const { email, productName, price, r, g, b } = req.body;
+    try {
+        await db.execute(
+            'INSERT INTO orders (user_email, product_name, price, red_value, green_value, blue_value) VALUES (?, ?, ?, ?, ?, ?)',
+            [email, productName, price, r, g, b]
+        );
+        res.json({ message: "訂單已成立！" });
+    } catch (err) {
+        res.status(500).json({ message: "紀錄失敗" });
+    }
+});
+
+// 取得歷史紀錄 API
+router.get('/history/:email', async (req, res) => {
+    try {
+        const [rows] = await db.execute(
+            'SELECT * FROM orders WHERE user_email = ? ORDER BY purchase_date DESC',
+            [req.params.email]
+        );
+        res.json(rows);
+    } catch (err) {
+        res.status(500).json({ message: "抓取紀錄失敗" });
+    }
+});
+
 module.exports = router;

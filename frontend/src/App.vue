@@ -5,6 +5,7 @@
         <router-link to="/" class="logo">🎨 顏色購物站</router-link>
         
         <div class="header-right">
+          <router-link v-if="token" to="/orders" class="nav-link" @click="goToCart">🕰️</router-link>
           <router-link to="/cart" class="nav-link" @click="goToCart">🛒</router-link>
           <button v-if="token" @click="handleLogout" class="logout-btn">登出</button>
           <router-link v-else to="/login" class="nav-link login-text">登入</router-link>
