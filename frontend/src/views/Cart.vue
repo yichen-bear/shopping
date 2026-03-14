@@ -31,7 +31,7 @@
       <p v-else style="text-align: center;">購物車目前是空的</p>
       
       <div class="back-btn-container">
-        <router-link to="/" class="back-btn">回到商品頁</router-link>
+        <router-link to="/products" class="back-btn">回到商品頁</router-link>
       </div>
     </div>
     <br><br>

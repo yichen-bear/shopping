@@ -15,8 +15,6 @@
     <main class="content-container">
       <router-view :token="token" @update-token="updateToken" />
     </main>
-
-    <!-- <p style="color: red; text-align: center;" v-if="!token && message">{{ message }}</p> -->
   </div>
 </template>
 
