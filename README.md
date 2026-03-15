@@ -1,37 +1,46 @@
-# 購物網站練習
+# 顏色購物站 (Color Shop) - 專案實作
 
-這是一個使用 **Vue.js** 作為前端、**Node.js (Express)** 作為後端的全棧購物網站練習專案。
+這是一個全端的練習專案，以「色彩」為主題，模擬從瀏覽商品、加入購物車到下單結帳的完整電商流程。使用者可以進行會員註冊與登入，並管理自己的購物清單與查看歷史訂單。
 
-## 使用技術棧
+---
 
-- **前端:** Vue 3 (Vite), Vue Router
-- **後端:** Node.js, Express
-- **資料庫:** MySQL
-- **版本控制:** Git / GitHub
+## 技術架構
 
-## 專案結構說明
+### 前端 (Frontend)
+- Vue 3 
+- Vue Router 
 
-- `/frontend`: Vue 3 前端專案
-- `/backend`: Node.js Express 後端 API 伺服器
+### 後端 (Backend)
+- Node.js
+- Express
+- Bcrypt
+- MySQL
 
-## 啟動步驟
+---
 
-- **後端啟動**
+## 如何運行
 
-  ```
-  cd backend
-  npm install
-  node index.js
-  ```
-- **前端啟動**
-  ```
-  cd frontend
-  npm install
-  npm run dev
-  ```
-- **資料庫資料操作**
+### 1. 複製專案
 ```
-USE my_shop;
+git clone https://github.com/yichen-bear/shopping
+```
+
+### 2. 前端設定
+```
+cd frontend
+npm install
+npm run dev
+```
+### 3. 後端設定
+```
+cd backend
+npm install
+node index.js
+```
+
+## 資料庫筆記
+```
+USE railway;
 ```
 ```
 SELECT * FROM users;
