@@ -37,6 +37,15 @@ cd backend
 npm install
 node index.js
 ```
+在 backend 目錄建立 .env
+```
+DB_HOST=turntable.proxy.rlwy.net
+DB_PORT=50024
+DB_USER=root
+DB_PASS=uBocPNmfTAsnoIWVIUAgwAdwxCwULTAJ
+DB_NAME=railway
+JWT_SECRET=my_super_secret_key
+```
 
 ## 資料庫筆記
 ```
