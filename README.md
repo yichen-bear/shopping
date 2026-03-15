@@ -37,7 +37,7 @@ cd backend
 npm install
 node index.js
 ```
-在 backend 目錄建立 .env
+在 backend 目錄建立 `.env` 檔案
 ```
 DB_HOST=turntable.proxy.rlwy.net
 DB_PORT=50024
