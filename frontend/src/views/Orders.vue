@@ -4,11 +4,6 @@
 		<div v-if="orders && orders.length === 0" class="no-data">
 			目前還沒有購買紀錄
 		</div>
-        <br><br>
-        <div class="button-group">
-            <router-link to="/products" class="main-btn">前往挑選</router-link>
-		    <router-link to="/cart" class="main-btn">前往結帳</router-link>
-        </div>
 
 		<div v-for="order in orders" :key="order.id" class="order-card">
 			<div
@@ -23,6 +18,11 @@
 				<small>購買時間：{{ formatDate(order.purchase_date) }}</small>
 			</div>
 		</div>
+        <br>
+        <div class="button-group">
+            <router-link to="/products" class="main-btn">前往挑選</router-link>
+		    <router-link to="/cart" class="main-btn">前往結帳</router-link>
+        </div>
 	</div>
 </template>
 
@@ -69,8 +69,21 @@ const fetchOrders = async () => {
 };
 
 const formatDate = (dateStr) => {
-	const date = new Date(dateStr);
-	return date.toLocaleString();
+  if (!dateStr) return "無日期";
+  
+  const date = new Date(dateStr);
+  
+  date.setHours(date.getHours() + 8);
+  
+  return date.toLocaleString('zh-TW', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: false
+  });
 };
 
 onMounted(() => {
